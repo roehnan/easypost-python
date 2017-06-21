@@ -14,8 +14,10 @@ Icon
 *.egg
 .tox
 *.class
+.cache
 
 *.sublime-*
 
 test
 virtualenv
+venv

@@ -1,0 +1,2 @@
+class PickupRate(Resource):
+    pass
