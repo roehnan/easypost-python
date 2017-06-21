@@ -1,4 +1,7 @@
-class Webhook(AllResource, CreateResource, DeleteResource):
+from .base import BaseResource
+
+
+class Webhook(BaseResource):
     def update(self, **params):
         requestor = Requestor(self.api_key)
         url = self.instance_url()
