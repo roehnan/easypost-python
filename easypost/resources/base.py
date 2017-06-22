@@ -496,42 +496,38 @@ class EasyPostObjectEncoder(json.JSONEncoder):
 
 class BaseResource(EasyPostObject):
 
-    # url = None
-    # propTypes = {}
-    # jsonIdKeys = []
+    url = None
+    propTypes = {}
+    jsonIdKeys = []
+
+    # @classmethod
+    # def class_name(cls):
+    #     if cls == cls.__name__:
+    #         raise NotImplementedError('Resource is an abstract class. '
+    #                                   'You should perform actions on its subclasses.')
+    #
+    #     cls_name = six.text_type(cls.__name__)
+    #     cls_name = cls_name[0:1] + re.sub(r'([A-Z])', r'_\1', cls_name[1:])
+    #     return "%s" % cls_name.lower()
+    #
+    # @classmethod
+    # def class_url(cls):
+    #     cls_name = cls.class_name()
+    #     if cls_name[-1:] == "s" or cls_name[-1:] == "h":
+    #         return "/%ses" % cls_name
+    #     else:
+    #         return "/%ss" % cls_name
+    #
+    # @classmethod
+    # def create(cls, api_key=None, **params):
+    #     requestor = Requestor(api_key)
+    #     url = cls.class_url()
+    #     wrapped_params = {cls.class_name(): params}
+    #     response, api_key = requestor.request('post', url, wrapped_params)
+    #     return convert_to_easypost_object(response, api_key)
 
     @classmethod
-    def class_name(cls):
-        if cls == Resource:
-            raise NotImplementedError('Resource is an abstract class. '
-                                      'You should perform actions on its subclasses.')
-
-        cls_name = six.text_type(cls.__name__)
-        cls_name = cls_name[0:1] + re.sub(r'([A-Z])', r'_\1', cls_name[1:])
-        return "%s" % cls_name.lower()
-
-    @classmethod
-    def class_url(cls):
-        cls_name = cls.class_name()
-        if cls_name[-1:] == "s" or cls_name[-1:] == "h":
-            return "/%ses" % cls_name
-        else:
-            return "/%ss" % cls_name
-
-    @classmethod
-    def create(cls, api_key=None, **params):
-        requestor = Requestor(api_key)
-        url = cls.class_url()
-        wrapped_params = {cls.class_name(): params}
-        response, api_key = requestor.request('post', url, wrapped_params)
-        return convert_to_easypost_object(response, api_key)
-
-    @classmethod
-    def retrieve(cls, easypost_id, api_key=None, **params):
-        try:
-            easypost_id = easypost_id['id']
-        except (KeyError, TypeError):
-            pass
+    def retrieve(cls, ep_id):
 
         instance = cls(easypost_id, api_key, **params)
         instance.refresh()
