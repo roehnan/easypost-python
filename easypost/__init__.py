@@ -3,21 +3,21 @@ from urllib.parse import urljoin
 import requests
 
 from .version import VERSION
-from .errors import Error
+from .errors import ApiError, HttpError, NoApiKeyError
 from .resources.webhook import Webhook
 
 
 __author__ = 'EasyPost <oss@easypost.com>'
 __version__ = VERSION
 version_info = tuple(int(v) for v in VERSION.split('.'))
-USER_AGENT = 'EasyPost/v2 PythonClient/{0}'.format(VERSION)
+USER_AGENT = 'EasyPost/v2 PythonClient/{0}'.format(VERSION)  # FIXME: not all endpoints are /v2 anymore
 api_key = None
-api_base = 'https://api.easypost.com/v2'
-request_lib = 'requests'  # FIXME: we have supported other libs. do we still need to?
+api_base = 'https://api.easypost.com/v2'  # FIXME: not all endpoints are /v2 anymore
+request_lib = 'requests'  # FIXME: need to support google.appengine.api. will do that as the last step
 timeout = 60
 
 
-class API:
+class Api:
 
     DEFAULT_HEADERS = {
         'X-Client-User-Agent': {
@@ -28,23 +28,13 @@ class API:
         },
         'User-Agent': USER_AGENT,
         'Authorization': 'Bearer %s' % api_key,
-        'Content-type': 'application/json' # FIXME: changed from application/x-www-form-urlencoded
+        'Content-type': 'application/json'  # FIXME: changed from application/x-www-form-urlencoded
     }
 
     @classmethod
-    def handle_api_error(cls, response):  # FIXME: should this be in a different class/file?
-        status_code = response.status_code
-        resp_text = response.text
-        if not (200 <= status_code < 300):
-            try:
-                error = response['error']
-            except (KeyError, TypeError):
-                raise Error("Invalid response from API: (%d) %r " % (status_code, resp_text), status_code, resp_text)
-
-            try:
-                raise Error(error.get('message', ''), status_code, resp_text)
-            except AttributeError:
-                raise Error(error, status_code, resp_text)
+    def handle_api_error(cls, response):
+        if not (200 <= response.status_code < 300):
+            raise ApiError(response)
 
     @classmethod
     def build_url(cls, path):
@@ -53,17 +43,14 @@ class API:
     @classmethod
     def build_headers(cls, headers):
         headers = headers or {}
-        if not api_key:  # FIXME: we currently allow Users to be created without an api_key
-            raise Error(  # FIXME: should i start making better error classes like NoApiKeyError()?
-                'No API key provided. Set an API key via "easypost.api_key = \'APIKEY\'. '
-                'Your API keys can be found in your EasyPost dashboard, or you can email us '
-                'at contact@easypost.com for assistance.')
+        if not api_key:  # FIXME: we currently allow Users to be created without an api_key. do we want to continue allowing that?
+            raise NoApiKeyError()
         return {**cls.DEFAULT_HEADERS, **headers}
 
     @classmethod
     def request(cls, method, path, params, headers):
         data = None
-        if method == 'post' or method == 'put':
+        if method == 'POST' or method == 'PUT':
             data = params
             params = None
         url = cls.build_url(path)
@@ -80,11 +67,10 @@ class API:
                 verify=True
             )
         except Exception:
-            raise Error("Unexpected error communicating with EasyPost. If this "
-                    "problem persists please let us know at contact@easypost.com.")
+            raise HttpError()
 
-        cls.handle_api_error(resp)  # FIXME: should i put this all in the "try:" block?
-        return resp.json()  # FIXME: can i assume that this is safe?
+        cls.handle_api_error(resp)
+        return resp.json()  # FIXME: this is only safe if ApiError has already run .json()
 
     @classmethod
     def get(cls, path, params, headers):
