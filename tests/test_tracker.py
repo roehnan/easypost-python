@@ -28,7 +28,7 @@ def test_tracker_interactions(per_run_unique):
     # Create a tracker and then retrieve it. We assert on created and retrieved tracker's values.
     tracker = easypost.Tracker.create(
         tracking_code=tracking_code,
-        carrier="usps",
+        carrier='usps',
         options=dict(
             full_test_tracker=True,
         )
@@ -43,13 +43,13 @@ def test_tracker_interactions(per_run_unique):
     # retrieve all trackers by tracking_code
     trackers = easypost.Tracker.all(tracking_code=tracking_code)
 
-    assert len(trackers["trackers"])
-    assert trackers["trackers"][0].id == tracker.id == tracker2.id   # Should be the same as the ids above
+    assert len(trackers['trackers'])
+    assert trackers['trackers'][0].id == tracker.id == tracker2.id   # Should be the same as the ids above
 
     # create another test tracker
     tracker3 = easypost.Tracker.create(
         tracking_code=tracking_code,
-        carrier="USPS",
+        carrier='USPS',
         options=dict(
             full_test_tracker=True,
         )
@@ -60,6 +60,6 @@ def test_tracker_interactions(per_run_unique):
     # retrieve all created since 'tracker'
     trackers2 = easypost.Tracker.all(after_id=tracker.id, tracking_code=tracking_code)
 
-    assert len(trackers2["trackers"]) == 1             # Should be 1
-    assert trackers2["has_more"] is False              # Should be false
-    assert trackers2["trackers"][0].id == tracker3.id  # Should be the same as the id for tracker3
+    assert len(trackers2['trackers']) == 1             # Should be 1
+    assert trackers2['has_more'] is False              # Should be false
+    assert trackers2['trackers'][0].id == tracker3.id  # Should be the same as the id for tracker3

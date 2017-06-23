@@ -2,27 +2,27 @@ class Shipment(AllResource, CreateResource):
     @classmethod
     def track_with_code(cls, api_key=None, **params):
         requestor = Requestor(api_key)
-        url = "%s/%s" % (cls.class_url(), "track")
+        url = '%s/%s' % (cls.class_url(), 'track')
         response, api_key = requestor.request('get', url, params)
         return response
 
     def get_rates(self):
         requestor = Requestor(self.api_key)
-        url = "%s/%s" % (self.instance_url(), "rates")
+        url = '%s/%s' % (self.instance_url(), 'rates')
         response, api_key = requestor.request('get', url)
         self.refresh_from(response, api_key)
         return self
 
     def buy(self, **params):
         requestor = Requestor(self.api_key)
-        url = "%s/%s" % (self.instance_url(), "buy")
+        url = '%s/%s' % (self.instance_url(), 'buy')
         response, api_key = requestor.request('post', url, params)
         self.refresh_from(response, api_key)
         return self
 
     def refund(self, **params):
         requestor = Requestor(self.api_key)
-        url = "%s/%s" % (self.instance_url(), "refund")
+        url = '%s/%s' % (self.instance_url(), 'refund')
 
         response, api_key = requestor.request('get', url, params)
         self.refresh_from(response, api_key)
@@ -30,7 +30,7 @@ class Shipment(AllResource, CreateResource):
 
     def insure(self, **params):
         requestor = Requestor(self.api_key)
-        url = "%s/%s" % (self.instance_url(), "insure")
+        url = '%s/%s' % (self.instance_url(), 'insure')
 
         response, api_key = requestor.request('post', url, params)
         self.refresh_from(response, api_key)
@@ -38,7 +38,7 @@ class Shipment(AllResource, CreateResource):
 
     def label(self, **params):
         requestor = Requestor(self.api_key)
-        url = "%s/%s" % (self.instance_url(), "label")
+        url = '%s/%s' % (self.instance_url(), 'label')
 
         response, api_key = requestor.request('get', url, params)
         self.refresh_from(response, api_key)

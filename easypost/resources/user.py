@@ -8,13 +8,13 @@ class User(CreateResource, UpdateResource, DeleteResource):
         return convert_to_easypost_object(response, api_key)
 
     @classmethod
-    def retrieve(cls, easypost_id="", api_key=None, **params):
+    def retrieve(cls, easypost_id='', api_key=None, **params):
         try:
             easypost_id = easypost_id['id']
         except (KeyError, TypeError):
             pass
 
-        if easypost_id == "":
+        if easypost_id == '':
             requestor = Requestor(api_key)
             response, api_key = requestor.request('get', cls.class_url())
             return convert_to_easypost_object(response, api_key)
@@ -26,7 +26,7 @@ class User(CreateResource, UpdateResource, DeleteResource):
     @classmethod
     def all_api_keys(cls, api_key=None):
         requestor = Requestor(api_key)
-        url = "/api_keys"
+        url = '/api_keys'
         response, api_key = requestor.request('get', url)
         return convert_to_easypost_object(response, api_key)
 

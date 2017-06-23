@@ -6,7 +6,7 @@ import easypost
 def test_parcel_creation():
     # Simply create a Parcel and assert on saved data.
     parcel = easypost.Parcel.create(
-        predefined_package="RegionalRateBoxA",
+        predefined_package='RegionalRateBoxA',
         length=10.2,
         width=7.8,
         height=4.3,

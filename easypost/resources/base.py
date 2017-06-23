@@ -20,7 +20,7 @@ _max_timeout = 90
 try:
     from google.appengine.api import urlfetch
     request_lib = 'urlfetch'
-    # use the GAE application-wide "deadline" (or its default) if it's less than our existing max timeout
+    # use the GAE application-wide 'deadline' (or its default) if it's less than our existing max timeout
     _max_timeout = min(urlfetch.get_default_fetch_deadline() or 60, _max_timeout)
 except ImportError:
     IMPORT_ERR_MSG = ('EasyPost requires an up to date requests library. '
@@ -148,7 +148,7 @@ class Requestor(object):
         for k, v in sorted(six.iteritems(dict_value)):
             k = cls._utf8(k)
             v = cls._utf8(v)
-            n["%s[%s]" % (key, k)] = v
+            n['%s[%s]' % (key, k)] = v
         out.extend(cls._encode_inner(n))
 
     @classmethod
@@ -156,7 +156,7 @@ class Requestor(object):
         n = {}
         for k, v in enumerate(list_value):
             v = cls._utf8(v)
-            n["%s[%s]" % (key, k)] = v
+            n['%s[%s]' % (key, k)] = v
         out.extend(cls._encode_inner(n))
 
     @classmethod
@@ -259,7 +259,7 @@ class Requestor(object):
             try:
                 val = func()
             except Exception as e:
-                val = "!! %s" % e
+                val = '!! %s' % e
             ua[attr] = val
 
         if hasattr(ssl, 'OPENSSL_VERSION'):
@@ -273,15 +273,15 @@ class Requestor(object):
         }
 
         if timeout > _max_timeout:
-            raise Error("`timeout` must not exceed %d; it is %d" % (_max_timeout, timeout))
+            raise Error('`timeout` must not exceed %d; it is %d' % (_max_timeout, timeout))
 
         if request_lib == 'urlfetch':
             http_body, http_status = self.urlfetch_request(method, abs_url, headers, params)
         elif request_lib == 'requests':
             http_body, http_status = self.requests_request(method, abs_url, headers, params)
         else:
-            raise Error("Bug discovered: invalid request_lib: %s. "
-                        "Please report to contact@easypost.com." % request_lib)
+            raise Error('Bug discovered: invalid request_lib: %s. '
+                        'Please report to contact@easypost.com.' % request_lib)
 
         return http_body, http_status, my_api_key
 
@@ -289,7 +289,7 @@ class Requestor(object):
         try:
             response = json.loads(http_body)
         except Exception:
-            raise Error("Invalid response body from API: (%d) %s " % (http_status, http_body), http_status, http_body)
+            raise Error('Invalid response body from API: (%d) %s ' % (http_status, http_body), http_status, http_body)
         if not (200 <= http_status < 300):
             self.handle_api_error(http_status, http_body, response)
         return response
@@ -303,8 +303,8 @@ class Requestor(object):
         elif method == 'post' or method == 'put':
             data = self.encode(params)
         else:
-            raise Error("Bug discovered: invalid request method: %s. "
-                        "Please report to contact@easypost.com." % method)
+            raise Error('Bug discovered: invalid request method: %s. '
+                        'Please report to contact@easypost.com.' % method)
 
         try:
             result = requests_session.request(
@@ -318,8 +318,8 @@ class Requestor(object):
             http_body = result.text
             http_status = result.status_code
         except Exception as e:
-            raise Error("Unexpected error communicating with EasyPost. If this "
-                        "problem persists please let us know at contact@easypost.com.")
+            raise Error('Unexpected error communicating with EasyPost. If this '
+                        'problem persists please let us know at contact@easypost.com.')
         return http_body, http_status
 
     def urlfetch_request(self, method, abs_url, headers, params):
@@ -329,8 +329,8 @@ class Requestor(object):
         elif method == 'get' or method == 'delete':
             abs_url = self.build_url(abs_url, params)
         else:
-            raise Error("Bug discovered: invalid request method: %s. Please report "
-                        "to contact@easypost.com." % method)
+            raise Error('Bug discovered: invalid request method: %s. Please report '
+                        'to contact@easypost.com.' % method)
 
         args['url'] = abs_url
         args['method'] = method
@@ -341,8 +341,8 @@ class Requestor(object):
         try:
             result = urlfetch.fetch(**args)
         except:
-            raise Error("Unexpected error communicating with EasyPost. "
-                        "If this problem persists, let us know at contact@easypost.com.")
+            raise Error('Unexpected error communicating with EasyPost. '
+                        'If this problem persists, let us know at contact@easypost.com.')
 
         return result.content, result.status_code
 
@@ -350,7 +350,7 @@ class Requestor(object):
         try:
             error = response['error']
         except (KeyError, TypeError):
-            raise Error("Invalid response from API: (%d) %r " % (http_status, http_body), http_status, http_body)
+            raise Error('Invalid response from API: (%d) %r ' % (http_status, http_body), http_status, http_body)
 
         try:
             raise Error(error.get('message', ''), http_status, http_body)
@@ -395,7 +395,7 @@ class EasyPostObject():
             return self.__dict__[k]
         except KeyError:
             pass
-        raise AttributeError("%r object has no attribute %r" % (type(self).__name__, k))
+        raise AttributeError('%r object has no attribute %r' % (type(self).__name__, k))
 
     def __getitem__(self, k):
         return self.__dict__[k]
@@ -478,7 +478,7 @@ class EasyPostObject():
                 return [_serialize(r) for r in o]
             return o
 
-        d = {"id": self.get("id")} if self.get("id") else {}
+        d = {'id': self.get('id')} if self.get('id') else {}
         for k in sorted(self._values):
             v = getattr(self, k)
             v = _serialize(v)
@@ -508,15 +508,15 @@ class BaseResource(EasyPostObject):
     #
     #     cls_name = six.text_type(cls.__name__)
     #     cls_name = cls_name[0:1] + re.sub(r'([A-Z])', r'_\1', cls_name[1:])
-    #     return "%s" % cls_name.lower()
+    #     return '%s' % cls_name.lower()
     #
     # @classmethod
     # def class_url(cls):
     #     cls_name = cls.class_name()
-    #     if cls_name[-1:] == "s" or cls_name[-1:] == "h":
-    #         return "/%ses" % cls_name
+    #     if cls_name[-1:] == 's' or cls_name[-1:] == 'h':
+    #         return '/%ses' % cls_name
     #     else:
-    #         return "/%ss" % cls_name
+    #         return '/%ss' % cls_name
     #
     # @classmethod
     # def create(cls, api_key=None, **params):
@@ -579,5 +579,5 @@ class BaseResource(EasyPostObject):
         easypost_id = Requestor._utf8(easypost_id)
         base = self.class_url()
         param = quote_plus(easypost_id)
-        return "{base}/{param}".format(base=base, param=param)
+        return '{base}/{param}'.format(base=base, param=param)
 

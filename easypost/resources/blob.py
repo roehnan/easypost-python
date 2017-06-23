@@ -7,6 +7,6 @@ class Blob(AllResource, CreateResource):
             pass
 
         requestor = Requestor(api_key)
-        url = "%s/%s" % (cls.class_url(), easypost_id)
+        url = '%s/%s' % (cls.class_url(), easypost_id)
         response, api_key = requestor.request('get', url)
-        return response["signed_url"]
+        return response['signed_url']

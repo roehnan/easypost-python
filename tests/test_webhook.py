@@ -11,7 +11,7 @@ def test_webhooks(per_run_unique):
     # Create a webhook
     webhook = easypost.Webhook.create(url=url)
     assert webhook.id is not None
-    assert webhook.mode == "test"
+    assert webhook.mode == 'test'
     assert webhook.url == expected_url
     assert webhook.disabled_at is None
     assert isinstance(webhook, easypost.Webhook)
@@ -37,4 +37,4 @@ def test_webhooks(per_run_unique):
         easypost.Webhook.retrieve(webhook.id)
 
     assert exception_context.value.http_status == 404
-    assert exception_context.value.message == "The requested resource could not be found."
+    assert exception_context.value.message == 'The requested resource could not be found.'

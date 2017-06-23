@@ -8,12 +8,12 @@ class Address(AllResource, CreateResource):
         if verify or verify_strict:
             verify = verify or []
             verify_strict = verify_strict or []
-            url += "?"
+            url += '?'
 
             for param in verify:
-                url += "verify[]={0}".format(param)
+                url += 'verify[]={0}'.format(param)
             for param in verify_strict:
-                url += "verify_strict[]={0}".format(param)
+                url += 'verify_strict[]={0}'.format(param)
 
         wrapped_params = {cls.class_name(): params}
         response, api_key = requestor.request('post', url, wrapped_params)
@@ -22,11 +22,11 @@ class Address(AllResource, CreateResource):
     @classmethod
     def create_and_verify(cls, api_key=None, carrier=None, **params):
         requestor = Requestor(api_key)
-        url = "%s/%s" % (cls.class_url(), "create_and_verify")
+        url = '%s/%s' % (cls.class_url(), 'create_and_verify')
 
         wrapped_params = {
             cls.class_name(): params,
-            "carrier": carrier
+            'carrier': carrier
         }
         response, api_key = requestor.request('post', url, wrapped_params)
 
@@ -44,9 +44,9 @@ class Address(AllResource, CreateResource):
 
     def verify(self, carrier=None):
         requestor = Requestor(self.api_key)
-        url = "%s/%s" % (self.instance_url(), "verify")
+        url = '%s/%s' % (self.instance_url(), 'verify')
         if carrier:
-            url += "?carrier=%s" % carrier
+            url += '?carrier=%s' % carrier
         response, api_key = requestor.request('get', url)
 
         response_address = response.get('address', None)

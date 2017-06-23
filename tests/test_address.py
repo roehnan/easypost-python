@@ -86,8 +86,8 @@ def test_address_creation_with_verify_strict_failure():
 
     exception = caught_exception.value.json_body
 
-    assert exception['error']['code'] == "ADDRESS.VERIFY.FAILURE"
-    assert exception['error']['message'] == "Unable to verify address."
+    assert exception['error']['code'] == 'ADDRESS.VERIFY.FAILURE'
+    assert exception['error']['message'] == 'Unable to verify address.'
 
     assert len(exception['error']['errors']) >= 2
     assert exception['error']['errors'][0]['message'] == 'Address not found'

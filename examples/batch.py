@@ -6,30 +6,30 @@ easypost.api_key = 'cueqNZUb3ldeWTNX7MU3Mel8UXtaAMUi'
 
 # from address and parcel don't change
 from_address = easypost.Address.create(
-    name="Simpler Postage Inc.",
-    street1="388 Townsend St",
-    street2="Apt 20",
-    city="San Francisco",
-    state="CA",
-    zip="94107",
-    phone="415-456-7890"
+    name='Simpler Postage Inc.',
+    street1='388 Townsend St',
+    street2='Apt 20',
+    city='San Francisco',
+    state='CA',
+    zip='94107',
+    phone='415-456-7890'
 )
 
 parcel = easypost.Parcel.create(
-    predefined_package="RegionalRateBoxA",
+    predefined_package='RegionalRateBoxA',
     weight=64
 )
 
 # # populate order_list from db, csv, etc.
 order_list = [{
     'address': {
-        'name': "Jon Calhoun",
-        'street1': "388 Townsend St",
-        'street2': "Apt 30",
-        'city': "San Francisco",
-        'state': "CA",
-        'zip': "94107",
-        'phone': "415-456-7890"
+        'name': 'Jon Calhoun',
+        'street1': '388 Townsend St',
+        'street2': 'Apt 30',
+        'city': 'San Francisco',
+        'state': 'CA',
+        'zip': '94107',
+        'phone': '415-456-7890'
     },
     'order_number': '1234567890'
 }]
@@ -50,13 +50,13 @@ for order in order_list:
 batch = easypost.Batch.create_and_buy(shipment=shipments)
 
 # Poll while waiting for the batch to purchase the shipments
-while batch.state in ("creating", "queued_for_purchase", "purchasing"):
+while batch.state in ('creating', 'queued_for_purchase', 'purchasing'):
     sleep(5)
     batch.refresh()
     print(batch.state)
 
 # Insure the shipments after purchase
-if batch.state == "purchased":
+if batch.state == 'purchased':
     for shipment in batch.shipments:
         shipment.insure(amount=100)
 
