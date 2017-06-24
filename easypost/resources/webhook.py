@@ -1,10 +1,17 @@
+from voluptuous import Schema
+
 from .base import BaseResource
 
 
 class Webhook(BaseResource):
-    def update(self, **params):
-        requestor = Requestor(self.api_key)
-        url = self.instance_url()
-        response, api_key = requestor.request('put', url, params)
-        self.refresh_from(response, api_key)
-        return self
+
+    url = 'webhooks'
+    key = 'webhook'
+
+    prop_types = Schema({
+        "id": str,
+        "object": str,
+        "mode": str,
+        "url": str,
+        "disabled_at": str,  # FIXME: should be a datetime?
+    })

@@ -4,8 +4,10 @@ except ImportError:
     from distutils.core import setup
 
 install_requires = [
+    'attrdict >= 2.0.0',
     'requests >= 1.0.0',
-    'six'
+    'six',
+    'voluptuous >= 0.10.5'
 ]
 
 

@@ -24,10 +24,16 @@ class ApiError(Exception):
 
 class NoApiKeyError(Exception):
     message = (
-        'No API key provided. Set an API key via '
-        '`easypost.api_key = \'APIKEY\'`. Your API keys can be found in '
-        'your EasyPost dashboard, or you can email us at '
-        'contact@easypost.com for assistance.')
+        'No API key provided. Set an API key via `easypost.api_key = \'APIKEY\'`. Your API keys '
+        'can be found in your EasyPost dashboard, or you can email us at contact@easypost.com '
+        'for assistance.')
 
     def __init__(self, message=''):
         super(NoApiKeyError, self).__init__(message or self.message)
+
+
+class MethodNotImplemented(Exception):
+    message = 'Method {} not implemented for endpoint {}'
+
+    def __init__(self, method, endpoint):
+        super(MethodNotImplemented, self).__init__(self.message.format(method, endpoint))
