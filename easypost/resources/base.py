@@ -1,5 +1,3 @@
-from urllib.parse import urljoin
-
 from attrdict import AttrDict
 
 from ..errors import MethodNotImplemented
@@ -11,17 +9,29 @@ class BaseResource(AttrDict):
     prop_types = {}
     json_id_keys = []
 
-    def __init__(self, api):
-        super().__init__()
+    def __init__(self, *args, api=None):
+        super().__init__(*args)
         self.api = api
+
+
+    def __repr__(self):
+        return '<{} at {}> JSON: {}'.format(  # FIXME: this isn't actually JSON. nor is it formatted. no easy way to serialize AttrDict
+            type(self).__name__, hex(id(self)), super().__repr__())
 
     @classmethod
     def method_not_implemented(cls, method):
         raise MethodNotImplemented(method, cls.url)
 
+    def create(self, **kwargs):
+        resp = self.api.post(self.url, params=kwargs)
+        return self.__class__(resp, api=self.api)
+
     def retrieve(self, ep_id):
-        resp = self.api.get(urljoin(self.url, ep_id))
-        return self(resp)
+        resp = self.api.get('{}/{}'.format(self.url, ep_id))
+        return self.__class__(resp, api=self.api)
+
+    def delete(self, ep_id):
+        return self.api.delete('{}/{}'.format(self.url, ep_id))
     #
     # @classmethod
     # def all(cls, api_key=None, **params):
@@ -53,13 +63,6 @@ class BaseResource(AttrDict):
     #         response, api_key = requestor.request('put', url, params)
     #         self.refresh_from(response, api_key)
     #
-    #     return self
-    #
-    # def delete(self, **params):
-    #     requestor = Requestor(self.api_key)
-    #     url = self.instance_url()
-    #     response, api_key = requestor.request('delete', url, params)
-    #     self.refresh_from(response, api_key)
     #     return self
 
     # def instance_url(self):

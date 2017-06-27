@@ -15,3 +15,6 @@ class Webhook(BaseResource):
         "url": str,
         "disabled_at": str,  # FIXME: should be a datetime?
     })
+
+    def delete(self, ep_id):  # FIXME: this is actually implemented. just testing out method_not_implemented
+        self.method_not_implemented('delete')

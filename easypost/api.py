@@ -1,3 +1,4 @@
+import json
 from urllib.parse import urljoin
 
 import requests
@@ -9,25 +10,25 @@ from .resources.webhook import Webhook
 
 class Api:
 
-    def __init__(self, api_key=None, api_base='https://api.easypost.com/v2'):
+    def __init__(self, api_key=None, api_base='https://api.easypost.com/v2/'):
         self.user_agent = 'EasyPost/v2 PythonClient/{0}'.format(VERSION)  # FIXME: not all endpoints are /v2 anymore
         self.api_key = api_key
         self.api_base = api_base  # FIXME: not all endpoints are /v2 anymore
         self.request_lib = 'requests'  # FIXME: need to support google.appengine.api. will do that as the last step
         self.timeout = 60
+        ua = json.dumps({
+            'client_version': VERSION,
+            'lang': 'python',
+            'publisher': 'easypost',
+            'request_lib': self.request_lib,
+        })
         self.default_headers = {
-            'X-Client-User-Agent': {
-                'client_version': VERSION,
-                'lang': 'python',
-                'publisher': 'easypost',
-                'request_lib': self.request_lib,
-            },
+            'X-Client-User-Agent': ua,
             'User-Agent': self.user_agent,
-            'Authorization': 'Bearer %s'.format(self.api_key),
+            'Authorization': 'Bearer {}'.format(self.api_key),
             'Content-type': 'application/json'  # FIXME: changed from application/x-www-form-urlencoded
         }
-
-        self.Webhook = Webhook(self)
+        self.Webhook = Webhook(api=self)
 
     @classmethod
     def handle_api_error(cls, response):
@@ -46,11 +47,12 @@ class Api:
     def request(self, method, path, params, headers):
         data = None
         if method == 'POST' or method == 'PUT':
-            data = params
+            data = json.dumps(params)
             params = None
         url = self.build_url(path)
         headers = self.build_headers(headers)
 
+        print(data)
         try:
             resp = requests.request(
                 method,
