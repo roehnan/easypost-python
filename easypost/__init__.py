@@ -884,7 +884,6 @@ class Order(AllResource, CreateResource):
         an API error - unable to get rates.
         '''
         params['shipments'] = [(shp.to_dict() if isinstance(shp, Shipment) else shp) for shp in params['shipments']]
-        shipments = params['shipments']
         return super(Order, cls).create(api_key, **params)
 
     def get_rates(self):
