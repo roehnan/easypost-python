@@ -876,6 +876,17 @@ class Pickup(AllResource, CreateResource):
 
 
 class Order(AllResource, CreateResource):
+    @classmethod
+    def create(cls, api_key=None, **params):
+        '''
+        Trap the create call and "unpack" any passed-in Shipment objects
+        to their dictionary form. Otherwise, the create call will fail with
+        an API error - unable to get rates.
+        '''
+        params['shipments'] = [(shp.to_dict() if isinstance(shp, Shipment) else shp) for shp in params['shipments']]
+        shipments = params['shipments']
+        return super(Order, cls).create(api_key, **params)
+
     def get_rates(self):
         requestor = Requestor(self._api_key)
         url = "%s/%s" % (self.instance_url(), "rates")
